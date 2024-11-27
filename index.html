@@ -87,10 +87,6 @@
             margin-top: 5px;
         }
 
-        section h2,
-        button {
-            text-shadow: 0 0 10px #00ffab, 0 0 20px #00d4ff, 0 0 30px #00d4ff;
-        }
     </style>
 </head>
 
@@ -120,7 +116,7 @@
             <p>Convert spoken language into text in real-time.</p>
             <div class="feature">
                 <button onclick="startSpeechToText()" aria-label="Start speech-to-text">Start Speech-to-Text</button>
-                <p id="speechOutput" style="background: #2d3448; padding: 10px; border-radius: 5px; border: 1px solid #00ffab;"></p>
+                <p id="speechOutput"></p>
             </div>
         </section>
 
@@ -136,7 +132,8 @@
     </div>
 
     <footer>
-        <p>&copy; 2024 Inclusive AI App. Designed for accessibility and innovation.</p>
+        <p>&copy; 2024 Vita AI. Designed for accessibility and innovation.</p>
+        <p>Created with dedication by <strong>Pratik Rajendra Nagargoje</strong>, <strong>Kalyani Balaraju Pucha</strong>, and <strong>Atharv Dattatray Damale</strong>.</p>
     </footer>
 
     <script>
@@ -260,40 +257,6 @@
             synth.speak(utterance);
         }
     </script>
-<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-<df-messenger
-  chat-icon="https:&#x2F;&#x2F;image.similarpng.com&#x2F;very-thumbnail&#x2F;2021&#x2F;05&#x2F;Colorful-circle-logo-design-illustration-on-transparent-background-PNG.png"
-  chat-title="VitalAI"
-  agent-id="66defd9c-f98f-4d8d-999b-c167890813f2"
-  language-code="en"
-></df-messenger> 
-</script> 
-
-<script>
-        function playWelcomeVoice() {
-            const welcomeMessage = new SpeechSynthesisUtterance("Welcome to your AI Assistant! How can I assist you today?");
-            welcomeMessage.lang = "en-US";
-            welcomeMessage.pitch = 1;
-            welcomeMessage.rate = 1;
-            welcomeMessage.volume = 1;
-
-            // Speak the message
-            window.speechSynthesis.speak(welcomeMessage);
-        }
-
-        // Trigger speech synthesis on the first user interaction
-        function enableSpeechOnInteraction() {
-            document.removeEventListener("click", enableSpeechOnInteraction); // Remove listener after first interaction
-            document.removeEventListener("keydown", enableSpeechOnInteraction);
-            playWelcomeVoice(); // Play welcome message
-        }
-
-        // Add listeners for user interaction
-        document.addEventListener("click", enableSpeechOnInteraction);
-        document.addEventListener("keydown", enableSpeechOnInteraction);
-    </script>
-
-    
 </body>
 
 </html>
