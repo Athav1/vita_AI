@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vita AI</title>
+    <title>Inclusive AI App</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -92,14 +92,14 @@
 
 <body>
     <header>
-        <h1>VITA AI</h1>
+        <h1>Inclusive AI App</h1>
         <p>Empowering Accessibility Through Technology</p>
     </header>
 
     <div class="container">
         <!-- Blind Users Section -->
         <section>
-            <h2>For Visually impaired </h2>
+            <h2>For Blind Users</h2>
             <p>Upload an image to hear its description.</p>
             <div class="feature">
                 <input type="file" id="imageUpload" accept="image/*" aria-label="Upload an image">
@@ -110,9 +110,21 @@
             <p id="imageResponse"></p>
         </section>
 
+        <!-- Image Text Recognition Section -->
+        <section>
+            <h2>For Image Text Recognition</h2>
+            <p>Upload an image to extract the text from it.</p>
+            <div class="feature">
+                <input type="file" id="textImageUpload" accept="image/*" aria-label="Upload an image for text recognition">
+                <button onclick="extractTextFromImage()" aria-label="Extract text">Extract Text</button>
+                <p class="instructions">Upload an image containing text for the best results.</p>
+            </div>
+            <p id="textRecognitionResponse"></p>
+        </section>
+
         <!-- Deaf Users Section -->
         <section>
-            <h2>For hearing Impaired</h2>
+            <h2>For Deaf Users</h2>
             <p>Convert spoken language into text in real-time.</p>
             <div class="feature">
                 <button onclick="startSpeechToText()" aria-label="Start speech-to-text">Start Speech-to-Text</button>
@@ -188,10 +200,7 @@
                     if (data.responses[0].labelAnnotations && data.responses[0].labelAnnotations.length > 0) {
                         const labels = data.responses[0].labelAnnotations;
 
-                        // Prepare a more descriptive sentence
                         let description = "This image contains ";
-
-                        // Structure description based on the number of labels
                         if (labels.length > 1) {
                             description += labels.slice(0, -1).map(label => label.description).join(", ");
                             description += `, and ${labels[labels.length - 1].description}.`;
@@ -199,7 +208,6 @@
                             description += labels[0].description + ".";
                         }
 
-                        // Make the description more readable
                         responseElement.textContent = description;
                         speakText(description);
                     } else {
@@ -207,6 +215,72 @@
                     }
                 } catch (error) {
                     console.error("Error during image processing:", error);
+                    responseElement.textContent = error.message;
+                    speakText(error.message);
+                }
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Extract Text from Image for Text Recognition Section
+        async function extractTextFromImage() {
+            const fileInput = document.getElementById("textImageUpload");
+            const responseElement = document.getElementById("textRecognitionResponse");
+
+            if (fileInput.files.length === 0) {
+                responseElement.textContent = "Please upload an image with text.";
+                speakText("Please upload an image with text.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = async function () {
+                const base64Image = reader.result.split(",")[1];
+
+                const requestBody = {
+                    requests: [
+                        {
+                            image: { content: base64Image },
+                            features: [{ type: "TEXT_DETECTION", maxResults: 10 }]
+                        }
+                    ]
+                };
+
+                const apiKey = "AIzaSyDqdgibUUSZEr22Nr01P4oZKYI9znHrGhM"; // Your API Key here
+                const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
+
+                responseElement.textContent = "Processing image...";
+                speakText("Processing image...");
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch text detection. HTTP Status: " + response.status);
+                    }
+
+                    const data = await response.json();
+                    console.log("API Response:", data);
+
+                    if (data.responses[0].textAnnotations && data.responses[0].textAnnotations.length > 0) {
+                        const extractedText = data.responses[0].textAnnotations[0].description;
+
+                        responseElement.textContent = `Extracted Text: ${extractedText}`;
+                        speakText(`Extracted Text: ${extractedText}`);
+                    } else {
+                        throw new Error("No text detected in the image. Try uploading a clearer image.");
+                    }
+                } catch (error) {
+                    console.error("Error during text extraction:", error);
                     responseElement.textContent = error.message;
                     speakText(error.message);
                 }
@@ -257,16 +331,16 @@
             synth.speak(utterance);
         }
     </script>
-<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 <df-messenger
   chat-icon="https:&#x2F;&#x2F;image.similarpng.com&#x2F;very-thumbnail&#x2F;2021&#x2F;05&#x2F;Colorful-circle-logo-design-illustration-on-transparent-background-PNG.png"
   chat-title="VitalAI"
   agent-id="66defd9c-f98f-4d8d-999b-c167890813f2"
-  language-code="en" 
+  language-code="en"
 ></df-messenger>
-
 </scipt>
 </body>
 
 </html>
+
 
