@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inclusive AI App</title>
     <style>
-        body {
+        /* Add styles here (same as your existing styles) */body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
@@ -135,9 +135,9 @@
     <div class="container">
         <!-- Main Buttons for Navigation -->
         <div class="main-buttons">
-            <button onclick="navigateTo('blind')">For Blind Users</button>
-            <button onclick="navigateTo('mute')">For Mute Users</button>
-            <button onclick="navigateTo('deaf')">For Deaf Users</button>
+            <button onclick="navigateTo('blind'), stopAudio()">For Blind Users</button>
+            <button onclick="navigateTo('mute'), stopAudio()">For Mute Users</button>
+            <button onclick="navigateTo('deaf'), stopAudio()">For Deaf Users</button>
         </div>
 
         <!-- Blind Users Section -->
@@ -147,6 +147,8 @@
             <div class="feature">
                 <button onclick="showImageRecognition()" aria-label="Image Recognition">Image Recognition</button>
                 <button onclick="showTextRecognition()" aria-label="Text Recognition">Text Recognition</button>
+                <button onclick="getRealTimeLocation();hideOther()" aria-label="Get Real-Time Location">Get Real-Time Location</button>
+                <p id="locationResponse"></p>
             </div>
 
             <!-- Image Recognition Section -->
@@ -169,6 +171,7 @@
                 <div class="feature">
                     <input type="file" id="textImageUpload" accept="image/*" aria-label="Upload an image with text">
                     <button onclick="extractTextFromImage()" aria-label="Extract Text">Extract Text</button>
+                    <button onclick="stopAudio()" aria-label="Stop Audio">Stop Audio</button>
                     <p class="instructions">Upload an image with visible text for extraction.</p>
                 </div>
                 <p id="textResponse"></p>
@@ -180,9 +183,29 @@
             <h2>For Mute Users</h2>
             <p>Type your message, and let the app speak it for you.</p>
             <div class="feature">
+                <label for="languageSelectMute">Choose Language:</label>
+                <select id="languageSelectMute">
+                    <option value="en-US">English (US)</option>
+                    <option value="es-ES">Spanish</option>
+                    <option value="fr-FR">French</option>
+                    <option value="de-DE">German</option>
+                    <option value="hi-IN">Hindi</option>
+                </select>
                 <textarea id="textInput" placeholder="Type your message here..." aria-label="Message input"></textarea>
                 <button onclick="convertTextToSpeech()" aria-label="Speak message">Speak Message</button>
+                <button onclick="showMessages(), stopAudio()" aria-label="Quick Messages">Quick Messages</button>
             </div>
+            <section id="preset-messages" style="display:none;" >
+                <h2>Quick Messages</h2>
+                <button onclick="presetSpeak('Hello, how can I help you?')">Hello, how can I help you?</button>
+                <button onclick="presetSpeak('Good Morning!')">Good Morning!</button><br><br>
+                <button onclick="presetSpeak('I need assistance.')">I need assistance.</button>
+                <button onclick="presetSpeak('Thank you!')">Thank you!</button>
+                <button onclick="presetSpeak('Excuse Me please')">Excuse Me please</button><br><br><br>
+                <div>
+                    <button style="align-self: center;background-color: #8fc5ce; " onclick="backMessages()" aria-label="Back">Back</button>
+                </div>
+            </section>
         </section>
 
         <!-- Deaf Users Section -->
@@ -190,7 +213,16 @@
             <h2>For Deaf Users</h2>
             <p>Convert spoken language into text in real-time.</p>
             <div class="feature">
+                <label for="languageSelectDeaf">Choose Language:</label>
+                <select id="languageSelectDeaf">
+                    <option value="en-US">English (US)</option>
+                    <option value="es-ES">Spanish</option>
+                    <option value="fr-FR">French</option>
+                    <option value="de-DE">German</option>
+                    <option value="hi-IN">Hindi</option>
+                </select>
                 <button onclick="startSpeechToText()" aria-label="Start speech-to-text">Start Speech-to-Text</button>
+                <button onclick="stopSpeechToText()" aria-label="Stop speech-to-text">Stop Speech-to-Text</button>
                 <p id="speechOutput"></p>
             </div>
         </section>
@@ -204,12 +236,9 @@
     <script>
         // Function to navigate to different sections
         function navigateTo(section) {
-            // Hide all sections
             document.getElementById('blind').style.display = 'none';
             document.getElementById('mute').style.display = 'none';
             document.getElementById('deaf').style.display = 'none';
-
-            // Show the selected section
             document.getElementById(section).style.display = 'block';
         }
 
@@ -225,8 +254,38 @@
             document.getElementById('imageRecognitionSection').style.display = 'none';
         }
 
-        // Analyze Image for Blind Users using Google Cloud Vision API
+        // Show Quick Messages section
+        function showMessages() {
+            document.getElementById('preset-messages').style.display = 'block';
+            document.getElementById('textRecognitionSection').style.display = 'none';
+        }
+
+        function backMessages() {
+            document.getElementById('mute').style.display = 'block';
+            document.getElementById('preset-messages').style.display = 'none';
+        }
+
+        function hideOther() {
+            document.getElementById('imageRecognitionSection').style.display = 'none';
+            document.getElementById('textRecognitionSection').style.display = 'none';
+        }
+
+        // Analyze Image for Blind Users
         async function analyzeImage() {
+            const language = document.getElementById("languageSelectBlind").value;
+            const fileInput = document.getElementById("imageUpload");
+            const responseElement = document.getElementById("imageResponse");
+
+            if (fileInput.files.length === 0) {
+                responseElement.textContent = "Please upload an image.";
+                speakText("Please upload an image.", language);
+                return;
+            }
+
+            // Implement API calls for multilingual support (same as original with language parameter)
+        }
+                // Analyze Image for Blind Users using Google Cloud Vision API
+                async function analyzeImage() {
             const fileInput = document.getElementById("imageUpload");
             const responseElement = document.getElementById("imageResponse");
 
@@ -252,7 +311,7 @@
                 };
 
                 const apiKey = "AIzaSyDqdgibUUSZEr22Nr01P4oZKYI9znHrGhM"; // Your API Key here
-                const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
+                const apiUrl = https://vision.googleapis.com/v1/images:annotate?key=${apiKey};
 
                 responseElement.textContent = "Processing image...";
                 speakText("Processing image...");
@@ -273,8 +332,8 @@
                     const data = await response.json();
                     if (data.responses[0].labelAnnotations && data.responses[0].labelAnnotations.length > 0) {
                         const labels = data.responses[0].labelAnnotations.map(label => label.description).join(', ');
-                        responseElement.textContent = `Image contains: ${labels}`;
-                        speakText(`The image contains: ${labels}`);
+                        responseElement.textContent = Image contains: ${labels};
+                        speakText(The image contains: ${labels});
                     } else {
                         throw new Error("No recognizable objects found.");
                     }
@@ -314,7 +373,7 @@
                 };
 
                 const apiKey = "AIzaSyDqdgibUUSZEr22Nr01P4oZKYI9znHrGhM"; // Your API Key here
-                const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
+                const apiUrl = https://vision.googleapis.com/v1/images:annotate?key=${apiKey};
 
                 responseElement.textContent = "Processing image...";
                 speakText("Processing image...");
@@ -335,8 +394,8 @@
                     const data = await response.json();
                     if (data.responses[0].textAnnotations && data.responses[0].textAnnotations.length > 0) {
                         const extractedText = data.responses[0].textAnnotations[0].description;
-                        responseElement.textContent = `Extracted Text: ${extractedText}`;
-                        speakText(`Extracted Text: ${extractedText}`);
+                        responseElement.textContent = Extracted Text: ${extractedText};
+                        speakText(Extracted Text: ${extractedText});
                     } else {
                         throw new Error("No text detected in the image.");
                     }
@@ -354,55 +413,151 @@
             window.speechSynthesis.cancel();
         }
 
-        // Start Speech-to-Text for Deaf Users
-        function startSpeechToText() {
-            const outputElement = document.getElementById("speechOutput");
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = "en-US";
-            recognition.interimResults = false;
-            recognition.start();
+        // Function to get real-time location and speak it aloud
+function getRealTimeLocation() {
+    const responseElement = document.getElementById("locationResponse");
 
-            recognition.onresult = (event) => {
-                outputElement.textContent = event.results[0][0].transcript;
-            };
+    // Check if Geolocation is supported
+    if (!navigator.geolocation) {
+        const errorMessage = "Geolocation is not supported by your browser.";
+        responseElement.textContent = errorMessage;
+        speakText(errorMessage);
+        return;
+    }
 
-            recognition.onerror = (event) => {
-                outputElement.textContent = `Speech recognition error: ${event.error}`;
-            };
+    // Start location detection
+    responseElement.textContent = "Detecting location...";
+    speakText("Detecting location...");
+
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            // Use reverse geocoding to get address (using a geocoding API)
+            const apiKey = "AIzaSyACjqESP9U5B44JovhYbddcID2WhKEekHU"; // Replace with your geocoding API key
+            const apiUrl = https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey};
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch location details.");
+                }
+
+                const data = await response.json();
+                if (data.status === "OK" && data.results.length > 0) {
+                    const address = data.results[0].formatted_address;
+                    const locationMessage = You are currently at: ${address};
+                    responseElement.textContent = locationMessage;
+                    speakText(locationMessage);
+                } else {
+                    throw new Error("Unable to determine the location address.");
+                }
+            } catch (error) {
+                responseElement.textContent = error.message;
+                speakText(error.message);
+            }
+        },
+        (error) => {
+            let errorMessage = "Unable to retrieve your location.";
+            if (error.code === error.PERMISSION_DENIED) {
+                errorMessage = "Location access denied. Please allow location permissions.";
+            } else if (error.code === error.POSITION_UNAVAILABLE) {
+                errorMessage = "Location information is unavailable.";
+            } else if (error.code === error.TIMEOUT) {
+                errorMessage = "The request to get your location timed out.";
+            }
+            responseElement.textContent = errorMessage;
+            speakText(errorMessage);
         }
+    );
+}
 
         // Text-to-Speech for Mute Users
         function convertTextToSpeech() {
+            const language = document.getElementById("languageSelectMute").value;
             const text = document.getElementById("textInput").value.trim();
             if (!text) {
                 alert("Please enter some text.");
                 return;
             }
-
-            const synth = window.speechSynthesis;
             const utterance = new SpeechSynthesisUtterance(text);
-            synth.speak(utterance);
+            utterance.lang = language;
+            window.speechSynthesis.speak(utterance);
         }
+
+        function presetSpeak(message) {
+            const speech = new SpeechSynthesisUtterance(message);
+            window.speechSynthesis.speak(speech);
+        }
+
+        let recognition; // Declare recognition instance globally
+
+// Start Speech-to-Text for Deaf Users
+function startSpeechToText() {
+    const language = document.getElementById("languageSelectDeaf").value;
+    const outputElement = document.getElementById("speechOutput");
+
+    // Initialize SpeechRecognition only if not already initialized
+    if (!recognition) {
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = language;
+        recognition.interimResults = true; // To get intermediate results
+        recognition.continuous = true; // To keep it running continuously
+
+        recognition.onresult = (event) => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0].transcript)
+                .join('');
+            outputElement.textContent = transcript; // Update the output with the transcript
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+            outputElement.textContent = Error: ${event.error};
+        };
+    }
+
+    recognition.start(); // Start recognition
+    outputElement.textContent = "Listening for speech...";
+}
+
+// Stop Speech-to-Text
+function stopSpeechToText() {
+    if (recognition) {
+        recognition.stop(); // Stop recognition manually
+        recognition = null; // Reset the recognition instance
+        document.getElementById("speechOutput").textContent = "Speech recognition stopped.";
+    }
+}
 
         // Speak Text for Blind Users
-        function speakText(text) {
-            const synth = window.speechSynthesis;
+        function speakText(text, language) {
             const utterance = new SpeechSynthesisUtterance(text);
-            synth.speak(utterance);
+            utterance.lang = language;
+            window.speechSynthesis.speak(utterance);
         }
+
     </script>
+    
 
 
-    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+
+
+
+        
+<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 <df-messenger
   chat-icon="https:&#x2F;&#x2F;image.similarpng.com&#x2F;very-thumbnail&#x2F;2021&#x2F;05&#x2F;Colorful-circle-logo-design-illustration-on-transparent-background-PNG.png"
   chat-title="VitalAI"
   agent-id="66defd9c-f98f-4d8d-999b-c167890813f2"
   language-code="en"
 ></df-messenger>
-</scipt>
+</script>        
+ 
+        
+  
+        
 </body>
 
 </html>
-
-
