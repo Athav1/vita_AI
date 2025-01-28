@@ -311,7 +311,7 @@
                 };
 
                 const apiKey = "AIzaSyDqdgibUUSZEr22Nr01P4oZKYI9znHrGhM"; // Your API Key here
-                const apiUrl = https://vision.googleapis.com/v1/images:annotate?key=${apiKey};
+                const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
 
                 responseElement.textContent = "Processing image...";
                 speakText("Processing image...");
@@ -332,8 +332,8 @@
                     const data = await response.json();
                     if (data.responses[0].labelAnnotations && data.responses[0].labelAnnotations.length > 0) {
                         const labels = data.responses[0].labelAnnotations.map(label => label.description).join(', ');
-                        responseElement.textContent = Image contains: ${labels};
-                        speakText(The image contains: ${labels});
+                        responseElement.textContent = `Image contains: ${labels}`;
+                        speakText(`The image contains: ${labels}`);
                     } else {
                         throw new Error("No recognizable objects found.");
                     }
@@ -373,7 +373,7 @@
                 };
 
                 const apiKey = "AIzaSyDqdgibUUSZEr22Nr01P4oZKYI9znHrGhM"; // Your API Key here
-                const apiUrl = https://vision.googleapis.com/v1/images:annotate?key=${apiKey};
+                const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
 
                 responseElement.textContent = "Processing image...";
                 speakText("Processing image...");
@@ -394,8 +394,8 @@
                     const data = await response.json();
                     if (data.responses[0].textAnnotations && data.responses[0].textAnnotations.length > 0) {
                         const extractedText = data.responses[0].textAnnotations[0].description;
-                        responseElement.textContent = Extracted Text: ${extractedText};
-                        speakText(Extracted Text: ${extractedText});
+                        responseElement.textContent = `Extracted Text: ${extractedText}`;
+                        speakText(`Extracted Text: ${extractedText}`);
                     } else {
                         throw new Error("No text detected in the image.");
                     }
@@ -436,7 +436,7 @@ function getRealTimeLocation() {
 
             // Use reverse geocoding to get address (using a geocoding API)
             const apiKey = "AIzaSyACjqESP9U5B44JovhYbddcID2WhKEekHU"; // Replace with your geocoding API key
-            const apiUrl = https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey};
+            const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
 
             try {
                 const response = await fetch(apiUrl);
@@ -447,7 +447,7 @@ function getRealTimeLocation() {
                 const data = await response.json();
                 if (data.status === "OK" && data.results.length > 0) {
                     const address = data.results[0].formatted_address;
-                    const locationMessage = You are currently at: ${address};
+                    const locationMessage = `You are currently at: ${address}`;
                     responseElement.textContent = locationMessage;
                     speakText(locationMessage);
                 } else {
@@ -514,7 +514,7 @@ function startSpeechToText() {
 
         recognition.onerror = (event) => {
             console.error("Speech recognition error:", event.error);
-            outputElement.textContent = Error: ${event.error};
+            outputElement.textContent = `Error: ${event.error}`;
         };
     }
 
@@ -546,14 +546,13 @@ function stopSpeechToText() {
 
 
         
-<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-<df-messenger
-  chat-icon="https:&#x2F;&#x2F;image.similarpng.com&#x2F;very-thumbnail&#x2F;2021&#x2F;05&#x2F;Colorful-circle-logo-design-illustration-on-transparent-background-PNG.png"
-  chat-title="VitalAI"
-  agent-id="66defd9c-f98f-4d8d-999b-c167890813f2"
-  language-code="en"
-></df-messenger>
-</script>        
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger
+      chat-icon="https:&#x2F;&#x2F;encrypted-tbn0.gstatic.com&#x2F;images?q=tbn:ANd9GcT0cblfe_iPMtmlVmK2TSYhX8d_SWzjgvH9nw&amps"
+      chat-title="VitaAI"
+      agent-id="66defd9c-f98f-4d8d-999b-c167890813f2"
+      language-code="en"
+    ></df-messenger>
  
         
   
